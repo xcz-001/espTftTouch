@@ -18,21 +18,28 @@
 #include "Adafruit_GFX.h"
 #include "Adafruit_ILI9341.h"
 
-// For the Adafruit shield, these are the default.
-#define TFT_MISO 25
-#define TFT_CLK 19 // or SCK
-#define TFT_MOSI 23
-#define TFT_DC 21
-#define TFT_RST 18
-#define TFT_CS 22
+//VCC             3v3
+//GND             GND
+#define TFT_CS    5
+#define TFT_RST   27
+#define TFT_DC    21
+#define TFT_MOSI  13
+#define TFT_CLK   14      // or SCK
+#define TFT_LED   25      // pwm incase you need to control brightness
+#define TFT_MISO  12
 
-
+#define TOUCH_CLK 18
+#define TOUCH_CS  26
+#define TOUCH_DIN 23      //MOSI
+#define TOUCH_DO  19       //MISO
+#define TOUCH_IRQ (optional,unused)
 
 
 // Use hardware SPI (on Uno, #13, #12, #11) and the above for CS/DC
 //Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC);
 // If using the breakout, change pins as desired
 Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC, TFT_MOSI, TFT_CLK, TFT_RST, TFT_MISO);
+
 
 
 unsigned long testFillScreen() {
@@ -292,11 +299,13 @@ unsigned long testFilledRoundRects() {
   return micros() - start;
 }
 
-
-
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("ILI9341 Test!");
+  pinMode(TFT_LED, OUTPUT);
+  digitalWrite(TFT_LED, HIGH); // turn on backlight
+  pinMode(TOUCH_CS, OUTPUT);
+  digitalWrite(TOUCH_CS, HIGH); // deselect touch controller
 
   tft.begin();
 

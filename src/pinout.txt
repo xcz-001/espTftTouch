@@ -1,0 +1,41 @@
+This is the piout used to work on the tft display
+works for displaying graphics and text
+
+#define TFT_MISO 25
+#define TFT_CLK 19 // or SCK
+#define TFT_MOSI 23
+#define TFT_DC 21
+#define TFT_RST 18
+#define TFT_CS 22
+
+but the xpt2046 may be expecting the defaulth spi pins from the esp given:
+VSPI (Default SPI):
+MOSI: GPIO23
+MISO: GPIO19
+SCK (Clock): GPIO18
+CS (Chip Select): GPIO5
+HSPI:
+MOSI: GPIO13
+MISO: GPIO12
+SCK (Clock): GPIO14
+CS (Chip Select): GPIO15
+
+//VCC             3v3
+//GND             GND
+#define TFT_CS    5
+#define TFT_RST   27
+#define TFT_DC    21
+#define TFT_MOSI  13
+#define TFT_CLK   14      // or SCK
+#define TFT_LED   25      // pwm incase you need to control brightness
+#define TFT_MISO  12
+
+#define TOUCH_CLK 18
+#define TOUCH_CS  26
+#define TOUCH_DIN 23      //MOSI
+#define TOUCH_DO  19       //MISO
+#define TOUCH_IRQ (optional,unused)
+
+
+
+

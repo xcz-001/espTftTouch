@@ -1,0 +1,57 @@
+#include <XPT2046_Touchscreen.h>
+#include <SPI.h>
+
+
+//VCC             3v3
+//GND             GND
+#define TFT_CS    5
+#define TFT_RST   27
+#define TFT_DC    21
+#define TFT_MOSI  13
+#define TFT_CLK   14      // or SCK
+#define TFT_LED   25      // pwm incase you need to control brightness
+#define TFT_MISO  12
+
+#define TOUCH_CLK 18
+#define TOUCH_CS  26
+#define TOUCH_DIN 23      //MOSI
+#define TOUCH_DO  19       //MISO
+#define TOUCH_IRQ (optional,unused)
+
+#define CS_PIN  26
+// MOSI=11, MISO=12, SCK=13
+
+//XPT2046_Touchscreen ts(CS_PIN);
+//#define TIRQ_PIN  2
+XPT2046_Touchscreen ts(CS_PIN);  // Param 2 - NULL - No interrupts
+//XPT2046_Touchscreen ts(CS_PIN, 255);  // Param 2 - 255 - No interrupts
+//XPT2046_Touchscreen ts(CS_PIN, TIRQ_PIN);  // Param 2 - Touch IRQ Pin - interrupt enabled polling
+
+void setup() {
+  Serial.begin(115200);
+  ts.begin();
+  ts.setRotation(1);
+  while (!Serial && (millis() <= 1000));
+
+  pinMode(TFT_LED, OUTPUT);
+  digitalWrite(TFT_LED, HIGH); // turn on backlight
+  pinMode(TFT_CS, OUTPUT);
+  digitalWrite(TFT_CS, HIGH); // deselect TFT
+
+  Serial.println("XPT2046 Touchscreen Test");
+}
+
+void loop() {
+  if (ts.touched()) {
+    TS_Point p = ts.getPoint();
+    Serial.print("Pressure = ");
+    Serial.print(p.z);
+    Serial.print(", x = ");
+    Serial.print(p.x);
+    Serial.print(", y = ");
+    Serial.print(p.y);
+    delay(30);
+    Serial.println();
+  }
+}
+
