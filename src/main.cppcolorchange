@@ -1,0 +1,93 @@
+//THIS EXAMPLE COLOR CHANGES WHEN THE BUTTON IS PRESSED
+//Has functions for handling button press
+
+#include <SPI.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_ILI9341.h>
+#include <XPT2046_Touchscreen.h>
+
+// Display pins
+#define TFT_CS    5
+#define TFT_RST   27
+#define TFT_DC    21
+#define TFT_MOSI  13
+#define TFT_CLK   14
+#define TFT_LED   25
+#define TFT_MISO  12
+
+// Touch pins
+#define TOUCH_CS  26
+XPT2046_Touchscreen ts(TOUCH_CS);
+
+Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC, TFT_MOSI, TFT_CLK, TFT_RST, TFT_MISO);
+// AREA for CHANGE button
+#define BTN_X   60
+#define BTN_Y   100
+#define BTN_W   200
+#define BTN_H    60
+
+int currentColor = 0;
+
+// List of colors to cycle through
+uint16_t colors[] = {
+  ILI9341_BLACK,
+  ILI9341_RED,
+  ILI9341_GREEN,
+  ILI9341_BLUE,
+  ILI9341_YELLOW,
+  ILI9341_CYAN,
+  ILI9341_MAGENTA,
+  ILI9341_ORANGE
+};
+int numColors = sizeof(colors)/sizeof(colors[0]);
+
+bool touchedInButton(int x, int y) {
+  return x >= BTN_X && x <= (BTN_X + BTN_W) &&
+         y >= BTN_Y && y <= (BTN_Y + BTN_H);
+}
+
+void drawButton() {
+  tft.fillRect(BTN_X, BTN_Y, BTN_W, BTN_H, ILI9341_WHITE);
+  tft.setTextColor(ILI9341_BLACK);
+  tft.setTextSize(3);
+  tft.setCursor(BTN_X + 40, BTN_Y + 15);
+  tft.print("CHANGE");
+}
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(TFT_LED, OUTPUT);
+  digitalWrite(TFT_LED, HIGH);
+
+  tft.begin();
+  ts.begin();
+  ts.setRotation(1);
+  tft.setRotation(1);
+
+  // Draw initial UI
+  tft.fillScreen(colors[currentColor]);
+  drawButton();
+}
+
+void loop() {
+  if (!ts.touched()) {
+    delay(10);
+    return;
+  }
+  TS_Point p = ts.getPoint();
+
+  // Map raw touch to screen coords
+  int x = map(p.x, 200, 3800, 0, tft.width());
+  int y = map(p.y, 200, 3800, 0, tft.height());
+
+  // Check CHANGE button
+  if (touchedInButton(x,y)) {
+    // Next color
+    currentColor = (currentColor + 1) % numColors;
+    tft.fillScreen(colors[currentColor]);
+    drawButton();
+    delay(300); // simple debounce
+  }
+
+  delay(10);
+}

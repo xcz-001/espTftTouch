@@ -25,7 +25,7 @@ CS (Chip Select): GPIO15
 #define TFT_CS    5
 #define TFT_RST   27
 #define TFT_DC    21
-#define TFT_MOSI  13
+#define TFT_MOSI  13\
 #define TFT_CLK   14      // or SCK
 #define TFT_LED   25      // pwm incase you need to control brightness
 #define TFT_MISO  12
